@@ -16,7 +16,7 @@ spec:
         app: react-app
     spec:
       containers:
-        - name: react-app
-          image: ahadalichowdhury/three-tier-frontend:latest
-          ports:
-            - containerPort: 5173 # Ensure regular space here
+      - name: react-app
+        image: ahadalichowdhury/three-tier-frontend:v1
+        ports:
+        - containerPort: 5173
