@@ -8,7 +8,7 @@ function App() {
   useEffect(() => {
     // Fetch messages from Express API
     axios
-      .get("http://localhost:5000/api/hello")
+      .get("http://fe.ahadalichowdhury.online/api/hello")
       .then((response) => {
         setMessages(response.data);
       })
@@ -19,7 +19,7 @@ function App() {
 
   const saveMessage = () => {
     axios
-      .post("http://localhost:5000/api/message", { text: message })
+      .post("http://fe.ahadalichowdhury.online/api/message", { text: message })
       .then((response) => {
         console.log(response.data);
         setMessages([...messages, { text: message }]); // Update messages list
