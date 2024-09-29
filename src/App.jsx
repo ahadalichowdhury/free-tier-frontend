@@ -32,7 +32,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Messages mujib</h1>
+      <h1>Messages</h1>
 
       <ul>
         {messages.map((msg, index) => (
