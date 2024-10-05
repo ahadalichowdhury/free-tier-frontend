@@ -1,15 +1,17 @@
 pipeline {
-	agent any
+    agent any
+    
     tools {
         nodejs 'node20'
     }
+    
     environment {
-	    APP_NAME = "three-tier-frontend"
-            RELEASE = "latest"
-            DOCKER_USER = "ahadalichowdhury"
-            DOCKER_PASS = 'dockerhub'
-            IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-            IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        APP_NAME = "three-tier-frontend"
+        RELEASE = "latest"
+        DOCKER_USER = "ahadalichowdhury"
+        DOCKER_PASS = 'dockerhub'
+        IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
     
     stages {
@@ -27,20 +29,16 @@ pipeline {
         }
 
         stage("Build & Push Docker Image") {
-    steps {
-        script {
-            docker.withRegistry('', DOCKER_PASS) {
-                docker_image = docker.build "${IMAGE_NAME}"
-            }
-
-            docker.withRegistry('', DOCKER_PASS) {
-                docker_image.push("${IMAGE_TAG}")
-                docker_image.push('latest')
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
+                        def docker_image = docker.build("${IMAGE_NAME}")
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
+                    }
+                }
             }
         }
-    }
-
-
     }
 
     post {
