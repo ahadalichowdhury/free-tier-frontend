@@ -9,7 +9,7 @@ pipeline {
         APP_NAME = "three-tier-frontend"
         RELEASE = "latest"
         DOCKER_USER = "ahadalichowdhury"
-        DOCKER_PASS = 'dockerhub'
+        DOCKER_PASS = credentials('dockerhub')
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -35,7 +35,7 @@ pipeline {
         stage("Build & Push Docker Image") {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v2/',DOCKER_PASS) {
+                    docker.withRegistry('',DOCKER_PASS) {
                         docker_image = docker.build "${IMAGE_NAME}"
                         docker_image.push("${IMAGE_TAG}")
                         docker_image.push('latest')
