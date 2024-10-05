@@ -9,7 +9,7 @@ pipeline {
         APP_NAME = "three-tier-frontend"
         RELEASE = "latest"
         DOCKER_USER = "ahadalichowdhury"
-        DOCKER_PASS = credentials('dockerhub')
+        // DOCKER_PASS = credentials('dockerhub')
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
@@ -17,7 +17,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // Checkout the code from version control
+                git 'https://github.com/ahadalichowdhury/free-tier-frontend'
             }
         }
 
@@ -31,11 +32,20 @@ pipeline {
         stage("Build & Push Docker Image") {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_PASS) {
-                        def docker_image = docker.build("${IMAGE_NAME}")
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
+                    // Build the Docker image
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+
+                    // Use credentials to login and push the image
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        // Login to DockerHub
+                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+
+                        // Push the Docker image
+                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
                     }
+
+                    // Clean up local image to save space
+                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
