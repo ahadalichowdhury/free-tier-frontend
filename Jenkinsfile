@@ -32,18 +32,28 @@ pipeline {
             }
         }
 
-        stage("Build & Push Docker Image") {
-            steps {
-                script {
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
-                    }
+        stage('Build Docker'){
+            steps{
+                script{
+                    sh '''
+                    echo 'Buid Docker Image'
+                    docker build -t ahadalichowdhury/three-tier-frontend:${BUILD_NUMBER} .
+                    '''
                 }
             }
+        }
 
-       }
+        stage('Push the artifacts'){
+           steps{
+                script{
+                    sh '''
+                    echo 'Push to Repo'
+                    docker push ahadalichowdhury/three-tier-frontend:${BUILD_NUMBER}
+                    '''
+                }
+            }
+        }
+        
 
     }
 
