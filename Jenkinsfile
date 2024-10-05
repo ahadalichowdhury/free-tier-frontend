@@ -42,6 +42,17 @@ pipeline {
                 }
             }
         }
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    sh '''
+                    echo 'Logging into Docker Hub'
+                    echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
+                    '''
+                }
+            }
+        }
+
 
         stage('Push the artifacts'){
            steps{
