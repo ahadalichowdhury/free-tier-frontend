@@ -1,19 +1,18 @@
 pipeline {
     agent any
-    
+
     tools {
-        nodejs 'node20'
+        nodejs 'node20'  // Predefined Node.js tool installation
     }
-    
+
     environment {
         APP_NAME = "three-tier-frontend"
         RELEASE = "latest"
         DOCKER_USER = "ahadalichowdhury"
-        // DOCKER_PASS = credentials('dockerhub')
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -22,10 +21,12 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Install Node.js Dependencies') {
             steps {
-                sh 'npm install'
-                sh 'npm run build'
+                script {
+                    // Install Node.js dependencies
+                    sh 'npm install'
+                }
             }
         }
 
@@ -52,13 +53,8 @@ pipeline {
     }
 
     post {
-        success {
-            echo "Build and Docker push completed successfully."
-        }
-        failure {
-            mail to: 'smahadalichowdhury@gmail.com',
-                 subject: "Build Failed: ${currentBuild.fullDisplayName}",
-                 body: "Check Jenkins build log at ${env.BUILD_URL}"
+        always {
+            cleanWs()
         }
     }
 }
