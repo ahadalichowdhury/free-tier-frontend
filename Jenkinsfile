@@ -9,9 +9,12 @@ pipeline {
         APP_NAME = "three-tier-frontend"
         RELEASE = "latest"
         DOCKER_USER = "ahadalichowdhury"
+        OCKER_PASS = 'dockerhub'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
+
+
 
     stages {
         stage('Checkout') {
@@ -33,23 +36,19 @@ pipeline {
         stage("Build & Push Docker Image") {
             steps {
                 script {
-                    // Build the Docker image
-                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-
-                    // Use credentials to login and push the image
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        // Login to DockerHub
-                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-
-                        // Push the Docker image
-                        sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image = docker.build "${IMAGE_NAME}"
                     }
 
-                    // Clean up local image to save space
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
+                    }
                 }
             }
-        }
+
+       }
+
     }
 
     post {
