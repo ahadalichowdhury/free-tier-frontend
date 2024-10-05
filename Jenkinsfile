@@ -17,11 +17,10 @@ pipeline {
 
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the code from version control
-                git 'https://github.com/ahadalichowdhury/free-tier-frontend'
-            }
+        stage("Checkout from SCM"){
+                steps {
+                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/ahadalichowdhury/free-tier-frontend'
+                }
         }
 
         stage('Install Node.js Dependencies') {
