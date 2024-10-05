@@ -8,7 +8,7 @@ image:
   repository: ahadalichowdhury/three-tier-frontend
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "11194654804"
+  tag: "11194669968"
 
 ingress:
   enabled: false
