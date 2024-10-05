@@ -1,7 +1,7 @@
 pipeline {
 	agent any
     tools {
-        node 'node20'
+        nodejs 'node20'
     }
     environment {
 	    APP_NAME = "three-tier-frontend"
