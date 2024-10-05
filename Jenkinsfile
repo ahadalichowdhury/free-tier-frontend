@@ -26,18 +26,21 @@ pipeline {
             }
         }
 
-        stage('Docker Build and Push') {
-            steps {
-                script {
-                    // Docker login and build/push commands
-                    sh '''
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker build -t $IMAGE_NAME:$IMAGE_TAG .
-                        docker push $IMAGE_NAME:$IMAGE_TAG
-                    '''
-                }
+        stage("Build & Push Docker Image") {
+    steps {
+        script {
+            docker.withRegistry('', DOCKER_PASS) {
+                docker_image = docker.build "${IMAGE_NAME}"
+            }
+
+            docker.withRegistry('', DOCKER_PASS) {
+                docker_image.push("${IMAGE_TAG}")
+                docker_image.push('latest')
             }
         }
+    }
+
+
     }
 
     post {
