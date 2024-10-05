@@ -9,7 +9,7 @@ pipeline {
         APP_NAME = "three-tier-frontend"
         RELEASE = "latest"
         DOCKER_USER = "ahadalichowdhury"
-        DOCKER_PASS = credentials('dockerhub')
+        DOCKER_PASS = 'dockerhub'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
