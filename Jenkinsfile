@@ -8,19 +8,15 @@ pipeline {
     environment {
         APP_NAME = "three-tier-frontend"
         RELEASE = "latest"
-        DOCKER_USER = "ahadalichowdhury"
-        DOCKER_PASS = 'dockerhub'
         IMAGE_NAME = "${DOCKER_USER}/${APP_NAME}"
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
     }
 
-
-
     stages {
         stage("Checkout from SCM"){
-                steps {
-                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/ahadalichowdhury/free-tier-frontend'
-                }
+            steps {
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/ahadalichowdhury/free-tier-frontend'
+            }
         }
 
         stage('Install Node.js Dependencies') {
@@ -32,40 +28,38 @@ pipeline {
             }
         }
 
-        stage('Build Docker'){
-            steps{
-                script{
+        stage('Build Docker') {
+            steps {
+                script {
                     sh '''
-                    echo 'Buid Docker Image'
+                    echo 'Building Docker Image'
                     docker build -t ahadalichowdhury/three-tier-frontend:${BUILD_NUMBER} .
                     '''
                 }
             }
         }
+
         stage('Login to Docker Hub') {
             steps {
                 script {
                     sh '''
                     echo 'Logging into Docker Hub'
-                    echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
+                    echo ${DOCKER_CREDENTIALS_PSW} | docker login -u ${DOCKER_CREDENTIALS_USR} --password-stdin
                     '''
                 }
             }
         }
 
-
-        stage('Push the artifacts'){
-           steps{
-                script{
+        stage('Push the artifacts') {
+            steps {
+                script {
                     sh '''
-                    echo 'Push to Repo'
+                    echo 'Pushing to Repo'
                     docker push ahadalichowdhury/three-tier-frontend:${BUILD_NUMBER}
                     '''
                 }
             }
         }
-        
-
     }
 
     post {
