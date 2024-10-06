@@ -20,21 +20,27 @@ pipeline {
         }
 stage('SonarQube Analysis') {
     steps {
-        withSonarQubeEnv('sonar-server') {
-            // Echo SCANNER_HOME for debugging purposes
-            echo "SCANNER_HOME: $SCANNER_HOME"
+        script {
+            // Explicitly set the SCANNER_HOME variable if not done automatically
+            env.SCANNER_HOME = tool 'sonar-scanner'  // Adjust this line according to your configuration
+            
+            withSonarQubeEnv('sonar-server') {
+                // Echo SCANNER_HOME for debugging purposes
+                echo "SCANNER_HOME: ${env.SCANNER_HOME}"
 
-            // Run the SonarScanner
-            sh '''
-            $SCANNER_HOME/bin/sonar-scanner \
-            -Dsonar.projectKey=frontend \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=http://52.3.250.166:9000 \
-            -Dsonar.login=squ_a216aba82380c8fad82bd9a1d425ce27ec09ffb6
-            '''
+                // Run the SonarScanner
+                sh '''
+                ${env.SCANNER_HOME}/bin/sonar-scanner \
+                -Dsonar.projectKey=frontend \
+                -Dsonar.sources=. \
+                -Dsonar.host.url=http://52.3.250.166:9000 \
+                -Dsonar.login=squ_a216aba82380c8fad82bd9a1d425ce27ec09ffb6
+                '''
+            }
         }
     }
 }
+
 
 
 
