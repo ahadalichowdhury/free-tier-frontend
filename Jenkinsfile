@@ -64,9 +64,6 @@ pipeline {
             }
         }
         stage('Update Helm Chart') {
-            when {
-                branch 'main'
-            }
             steps {
                 script {
                     sh '''
