@@ -18,21 +18,6 @@ pipeline {
                 git branch: 'main', credentialsId: 'github', url: 'https://github.com/ahadalichowdhury/free-tier-frontend'
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('Sonarqube-erver') {
-                    sh 'sonar-scanner -Dsonar.projectKey=frontend -Dsonar.sources=. -Dsonar.host.url=http://52.3.250.166:9000 -Dsonar.login=$SONARQUBE_TOKEN'
-                }
-            }
-        }
-
-        stage("Quality Gate") {
-            steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
-                }    
-            }
-        }
         stage('Install Node.js Dependencies') {
             steps {
                 script {
@@ -76,14 +61,13 @@ pipeline {
                 }
             }
         }
-
         stage("Trivy Scan") {
-            steps {
-                script {
-                    sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ahadalichowdhury/three-tier-frontend:${BUILD_NUMBER} --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
-                }
-            }
-        }
+           steps {
+               script {
+	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ahadalichowdhury/three-tier-frontend:${BUILD_NUMBER} --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
+               }
+           }
+       }
 
         stage('Update Helm Chart and Push to GitHub') {
             steps {
