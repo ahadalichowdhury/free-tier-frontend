@@ -19,14 +19,17 @@ pipeline {
             }
         }
     stage("SonarQube Analysis") {
-    	steps {
-        	withSonarQubeEnv('sonar-server') {
-                        sh ''' $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectName=frontend \
-                        -Dsonar.projectKey=frontend '''
-                    }
-    	}
- }
+    steps {
+        withSonarQubeEnv('sonar-server') {
+            sh ''' 
+            sonar-scanner \
+            -Dsonar.projectName=frontend \
+            -Dsonar.projectKey=frontend 
+            '''
+        }
+    }
+}
+
         stage('Install Node.js Dependencies') {
             steps {
                 script {
