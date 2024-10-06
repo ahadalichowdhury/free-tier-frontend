@@ -18,6 +18,10 @@ pipeline {
                 git branch: 'main', credentialsId: 'github', url: 'https://github.com/ahadalichowdhury/free-tier-frontend'
             }
         }
+	    stage {
+		    sh 'which sonar-scanner'
+		    sh 'whereis sonar-scanner'
+	    }
     stage("SonarQube Analysis") {
     steps {
         withSonarQubeEnv('sonar-server') {
