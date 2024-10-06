@@ -63,24 +63,28 @@ pipeline {
                 }
             }
         }
-        stage('Update Helm Chart') {
-    steps {
-        script {
-            withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_PASSWORD')]) {
-                sh '''
-                    sed -i 's/tag: .*/tag: "${BUILD_ID}"/' helm/react-app-charts/values.yaml
-                    git config user.email "smahadalichowdhury@gmail.com"
-                    git config user.name "ahadalichowdhury"
-                    git add helm/react-app-charts/values.yaml
-                    git commit -m "Update tag in Helm chart"
-                    
-                    # Use the stored credentials for authentication
-                    echo $GITHUB_PASSWORD | git push https://ahadalichowdhury:$GITHUB_PASSWORD@github.com/ahadalichowdhury/free-tier-frontend.git main
-                '''
-            }
+        steps {
+    script {
+        withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+            sh """
+                # Update tag in the Helm chart file
+                sed -i 's/tag: .*/tag: ${BUILD_ID}/' helm/react-app-charts/values.yaml
+                
+                # Configure Git with user information
+                git config user.email "smahadalichowdhury@gmail.com"
+                git config user.name "ahadalichowdhury"
+                
+                # Add and commit the changes
+                git add helm/react-app-charts/values.yaml
+                git commit -m "Update tag in Helm chart"
+                
+                # Push to the GitHub repository using the Personal Access Token (PAT)
+                git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/ahadalichowdhury/free-tier-frontend.git main
+            """
         }
     }
 }
+
 
     }
 
