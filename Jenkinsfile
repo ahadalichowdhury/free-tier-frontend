@@ -64,19 +64,24 @@ pipeline {
             }
         }
         stage('Update Helm Chart') {
-            steps {
-                script {
-                    sh '''
-                        sed -i 's/tag: .*/tag: "${BUILD_ID}"/' helm/react-app-charts/values.yaml
-                        git config user.email "smahadalichowdhury@gmail.com"
-                        git config user.name "ahadalichowdhury"
-                        git add helm/react-app-charts/values.yaml
-                        git commit -m "Update tag in Helm chart"
-                        git push --set-upstream origin main
-                    '''
-                }
+    steps {
+        script {
+            withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_PASSWORD')]) {
+                sh '''
+                    sed -i 's/tag: .*/tag: "${BUILD_ID}"/' helm/react-app-charts/values.yaml
+                    git config user.email "smahadalichowdhury@gmail.com"
+                    git config user.name "ahadalichowdhury"
+                    git add helm/react-app-charts/values.yaml
+                    git commit -m "Update tag in Helm chart"
+                    
+                    # Use the stored credentials for authentication
+                    git push https://${GITHUB_USER}:${GITHUB_PASSWORD}@github.com/ahadalichowdhury/free-tier-frontend.git --set-upstream origin main
+                '''
             }
         }
+    }
+}
+
     }
 
     post {
