@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         nodejs 'node20'  // Predefined Node.js tool installation
-	sonarQubeScanner 'sonar-scanner'
+	sonar 'sonar-scanner'
     }
 
     environment {
@@ -36,15 +36,13 @@ pipeline {
             }
         }
 
-	stage("Quality Gate"){
-           steps {
-               script {
+        stage("Quality Gate") {
+            steps {
+                script {
                     waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
-                }	
+                }    
             }
-
         }
-
         stage('Install Node.js Dependencies') {
             steps {
                 script {
