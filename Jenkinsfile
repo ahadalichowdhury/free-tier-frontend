@@ -62,6 +62,13 @@ pipeline {
                 }
             }
         }
+        stage("Trivy Scan") {
+           steps {
+               script {
+	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ahadalichowdhury/three-tier-frontend:${BUILD_NUMBER} --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
+               }
+           }
+       }
 
         stage('Update Helm Chart and Push to GitHub') {
             steps {
