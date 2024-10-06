@@ -63,6 +63,23 @@ pipeline {
                 }
             }
         }
+        stage('Update Helm Chart') {
+            when {
+                branch 'main'
+            }
+            steps {
+                script {
+                    sh '''
+                        sed -i 's/tag: .*/tag: "${BUILD_ID}"/' helm/react-app-charts/values.yaml
+                        git config user.email "smahadalichowdhury@gmail.com"
+                        git config user.name "ahadalichowdhury"
+                        git add helm/react-app-charts/values.yaml
+                        git commit -m "Update tag in Helm chart"
+                        git push
+                    '''
+                }
+            }
+        }
     }
 
     post {
