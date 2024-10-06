@@ -18,26 +18,6 @@ pipeline {
                 git branch: 'main', credentialsId: 'github', url: 'https://github.com/ahadalichowdhury/free-tier-frontend'
             }
         }
-stage("Check SonarScanner") {
-            steps {
-                script {
-                    // Check where the sonar-scanner is located
-                    sh 'which sonar-scanner'
-                    sh 'whereis sonar-scanner'
-                }
-            }
-        }
-    stage("SonarQube Analysis") {
-    steps {
-        withSonarQubeEnv('sonar-server') {
-            sh ''' 
-            sonar-scanner \
-            -Dsonar.projectName=frontend \
-            -Dsonar.projectKey=frontend 
-            '''
-        }
-    }
-}
 
         stage('Install Node.js Dependencies') {
             steps {
