@@ -18,6 +18,31 @@ pipeline {
                 git branch: 'main', credentialsId: 'github', url: 'https://github.com/ahadalichowdhury/free-tier-frontend'
             }
         }
+	stage('SonarQube Scan') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONARQUBE_TOKEN')]) {
+                        sh """
+                        echo 'Running SonarQube scan'
+                        sonar-scanner \
+                          -Dsonar.projectKey=frontend \
+                          -Dsonar.sources=. \
+                          -Dsonar.host.url=http://52.3.250.166:9000 \
+                          -Dsonar.login=${SONARQUBE_TOKEN}
+                        """
+                    }
+                }
+            }
+        }
+
+	stage("Quality Gate"){
+           steps {
+               script {
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
+                }	
+            }
+
+        }
 
         stage('Install Node.js Dependencies') {
             steps {
