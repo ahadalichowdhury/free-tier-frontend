@@ -20,18 +20,11 @@ pipeline {
         }
     stage("SonarQube Analysis") {
     	steps {
-        	script {
-            		withSonarQubeEnv(credentialsId: 'sonarqube-token') {
-                	// Run the sonar-scanner command with the necessary parameters
-                	sh '''
-               		 sonar-scanner \
-                  		-Dsonar.projectKey=frontend \
-                  		-Dsonar.sources=. \
-                  		-Dsonar.host.url=http://52.3.250.166:9000 \
-                 	        -Dsonar.login=squ_a216aba82380c8fad82bd9a1d425ce27ec09ffb6
-                	'''
-            		}
-       		 }
+        	withSonarQubeEnv('sonar-server') {
+                        sh ''' $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectName=frontend \
+                        -Dsonar.projectKey=frontend '''
+                    }
     	}
  }
         stage('Install Node.js Dependencies') {
