@@ -3,7 +3,6 @@ pipeline {
 
     tools {
         nodejs 'node20'  // Predefined Node.js tool installation
-	SonarQube Scanner 'sonar-scanner'
     }
 
     environment {
@@ -19,22 +18,15 @@ pipeline {
                 git branch: 'main', credentialsId: 'github', url: 'https://github.com/ahadalichowdhury/free-tier-frontend'
             }
         }
-	stage('SonarQube Scan') {
+	stages {
+        stage('SonarQube Analysis') {
             steps {
-                script {
-                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONARQUBE_TOKEN')]) {
-                        sh """
-                        echo 'Running SonarQube scan'
-                        sonar-scanner \
-                          -Dsonar.projectKey=frontend \
-                          -Dsonar.sources=. \
-                          -Dsonar.host.url=http://52.3.250.166:9000 \
-                          -Dsonar.login=${SONARQUBE_TOKEN}
-                        """
-                    }
+                withSonarQubeEnv('Sonarqube-erver') {
+                    sh 'sonar-scanner -Dsonar.projectKey=frontend -Dsonar.sources=. -Dsonar.host.url=http://52.3.250.166:9000 -Dsonar.login=$SONARQUBE_TOKEN'
                 }
             }
         }
+    }
 
         stage("Quality Gate") {
             steps {
