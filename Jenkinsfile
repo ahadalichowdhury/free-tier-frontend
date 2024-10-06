@@ -75,7 +75,7 @@ pipeline {
                     git commit -m "Update tag in Helm chart"
                     
                     # Use the stored credentials for authentication
-                    git push https://${GITHUB_USER}:${GITHUB_PASSWORD}@github.com/ahadalichowdhury/free-tier-frontend.git --set-upstream origin main
+                    git push
                 '''
             }
         }
