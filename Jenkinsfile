@@ -72,7 +72,7 @@ pipeline {
                         git config user.name "ahadalichowdhury"
                         git add helm/react-app-charts/values.yaml
                         git commit -m "Update tag in Helm chart"
-                        git push
+                        git push --set-upstream origin main
                     '''
                 }
             }
