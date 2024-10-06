@@ -75,7 +75,7 @@ pipeline {
                     git commit -m "Update tag in Helm chart"
                     
                     # Use the stored credentials for authentication
-                    git push
+                    git push --set-upstream origin main
                 '''
             }
         }
